@@ -15,6 +15,12 @@ from torchtext.data.metrics import bleu_score
 from torch.nn import Parameter
 from transformers import RobertaTokenizer
 
+import argparse
+
+arg_parser = argparse.ArgumentParser(description='Execute DeepPseudo')
+arg_parser.add_argument('--train', action='store_true', help='Train or not train')
+args = arg_parser.parse_args()
+
 warnings.simplefilter(action='ignore', category=UserWarning)
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=RuntimeWarning)
@@ -30,9 +36,9 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f'Device: {DEVICE}')
 
 """
-参数设置
+参数设置 (Hyperparams)
 """
-train = True
+train = args.train
 data_dir = "data/django"
 train_path = "train.csv"
 valid_path = "valid.csv"
@@ -51,6 +57,7 @@ BATCH_SIZE = 64
 LR = 1e-3
 N_EPOCHS = 40
 GRAD_CLIP = 1.0
+print(f'Training: {train}')
 
 def tokenize_code(text):
     return text.split()
