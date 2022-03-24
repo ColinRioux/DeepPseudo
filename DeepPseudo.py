@@ -19,6 +19,7 @@ import argparse
 
 arg_parser = argparse.ArgumentParser(description='Execute DeepPseudo')
 arg_parser.add_argument('--train', action='store_true', help='Train or not train')
+arg_parser.add_argument('--data_path', help='The location of the train, val, and test sets', default='data/django') 
 args = arg_parser.parse_args()
 
 warnings.simplefilter(action='ignore', category=UserWarning)
@@ -39,11 +40,13 @@ print(f'Device: {DEVICE}')
 参数设置 (Hyperparams)
 """
 train = args.train
-data_dir = "data/django"
+data_dir = args.data_path
 train_path = "train.csv"
 valid_path = "valid.csv"
 test_path = "test.csv"
 save_path = 'model/django.pth'
+if data_dir == 'data/spoc':
+    save_path = 'model/spoc.pth'
 D_MODEL = 256
 N_LAYERS = 3
 N_HEADS = 8
@@ -58,6 +61,8 @@ LR = 1e-3
 N_EPOCHS = 40
 GRAD_CLIP = 1.0
 print(f'Training: {train}')
+print(f'Data Directory: {data_dir}')
+print(f'Model Save: {save_path}')
 
 def tokenize_code(text):
     return text.split()
