@@ -6,7 +6,7 @@ Author: Colin Rioux
 import typing
 import os.path as path
 
-from problem import Problem
+from ../problem import Problem
 import pandas as pd
 
 class Dataset:
