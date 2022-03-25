@@ -6,7 +6,7 @@ Author: Colin Rioux
 import typing
 import os.path as path
 
-from ../problem import Problem
+from colin.problem import Problem
 import pandas as pd
 
 class Dataset:
@@ -20,7 +20,7 @@ class Dataset:
     @property val:pd.DataFrame the validation set
     @property test:pd.DataFrame the test set
     """
-    def __init__(self, dsid: str, data_path: str, sep: str = ",") -> Dataset:
+    def __init__(self, dsid: str, data_path: str, sep: str = ",") -> None:
         """
         @param dsid:str the name of the dataset
         @param data_path:str the file path to the train, val, and test sets

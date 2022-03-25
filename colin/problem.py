@@ -15,7 +15,7 @@ class PSPair():
     @property ps a string of pseudocode
     @property sc a string of source code
     """
-    def __init__(self, owner: int, pid: str, indent: int, ps: str, sc: str):
+    def __init__(self, owner: int, pid: str, indent: int, ps: str, sc: str) -> None:
         self.owner = owner
         self.pid = pid
         self.indent = indent,
@@ -30,7 +30,7 @@ class Node():
     @property parent the parent of the node
     @property children a list of children for the node
     """
-    def __init__(self, pspair: PSPair, parent: Node, children: List[Node]) -> Node:
+    def __init__(self, pspair: PSPair, parent, children: list) -> None:
         self.data = pspair
         self.parent = parent
         self.children = children
@@ -44,6 +44,6 @@ class Problem():
     @property id the problem id
     @property root the root node of the tree (first line of code)
     """
-    def __init__(self, pid: str, root: Node):
+    def __init__(self, pid: str, root: Node) -> None:
         self.id = pid
         self.root = root
