@@ -4,7 +4,7 @@ Dataset Base Class (the template other processors should use)
 Author: Colin Rioux
 """
 import typing
-import path
+import os.path as path
 
 from problem import Problem
 import pandas as pd
