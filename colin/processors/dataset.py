@@ -40,4 +40,4 @@ class Dataset:
         @param t:str "train", "val", or "test"
         """
         df = self.train if t == "train" else self.val if t == "val" else self.test
-        print(df.head())
+
