@@ -49,4 +49,4 @@ for file in files:
                 dfs.append(ndf)
 
     final_df = pd.concat(dfs, axis=1).T.reset_index(drop=True)
-    final_df.to_csv(os.path.join(args.out_path, fname), sep="\t")
+    final_df.to_csv(os.path.join(args.out_path, fname), sep='\t', index=False)
