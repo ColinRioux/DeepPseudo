@@ -19,7 +19,8 @@ import argparse
 
 arg_parser = argparse.ArgumentParser(description='Execute DeepPseudo')
 arg_parser.add_argument('--train', action='store_true', help='Train or not train')
-arg_parser.add_argument('--data_path', help='The location of the train, val, and test sets', default='data/django') 
+arg_parser.add_argument('--data_path', help='The location of the train, val, and test sets', default='data/django')
+arg_parser.add_argument('--file_type', help='File type of the datasets', default='.csv')
 args = arg_parser.parse_args()
 
 warnings.simplefilter(action='ignore', category=UserWarning)
@@ -41,9 +42,9 @@ print(f'Device: {DEVICE}')
 """
 train = args.train
 data_dir = args.data_path
-train_path = "train.csv"
-valid_path = "valid.csv"
-test_path = "test.csv"
+train_path = "train" + args.file_type
+valid_path = "valid" + args.file_type
+test_path = "test" + args.file_type
 save_path = 'model/django.pth'
 if data_dir == 'data/spoc':
     save_path = 'model/spoc.pth'
