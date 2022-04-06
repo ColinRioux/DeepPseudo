@@ -5,8 +5,8 @@ Author: Colin Rioux
 conda create -n coen497
 conda activate coen497
 conda install pytorch==1.1.0 torchvision==0.3.0 cudatoolkit=10.0 -c pytorch
-pip install nltk numpy scikit-learn scikit-image matplotlib torchtext==0.9.0
-pip install tokenizers boto3 filelock requests tqdm regex sentencepiece sacremoses
+pip install nltk numpy scikit-learn scikit-image matplotlib torchtext==0.10.0
+pip install tokenizers==0.0.11 boto3 filelock requests tqdm regex sentencepiece sacremoses
 pip install git+https://github.com/Maluuba/nlg-eval.git@master
 pip install pandas pytextrank transformers
 nlg-eval --setup ./DeepPseudo/data/django
