@@ -13,7 +13,7 @@ import os
 arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument('--data_path', default='./data/in/')
 arg_parser.add_argument('--out_path', default='./data/uniq/')
-args = arg_parser.parser_args()
+args = arg_parser.parse_args()
 
 files = glob.glob(os.path.join(args.data_path, "*.tsv"))
 
