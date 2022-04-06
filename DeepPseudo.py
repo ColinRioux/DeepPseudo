@@ -99,7 +99,7 @@ train_data, valid_data, test_data = data.TabularDataset.splits(path=data_dir,
                                               test=test_path,
                                               format=args.file_type,
                                               skip_header=True,
-                                              csv_reader_params={'delimiter':','},
+                                              #csv_reader_params={'delimiter':','},
                                               fields=[('src',CODE),('trg',NL)])
 MIN_COUNT = 1
 CODE.build_vocab(train_data, min_freq=MIN_COUNT)
