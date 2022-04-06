@@ -97,7 +97,7 @@ train_data, valid_data, test_data = data.TabularDataset.splits(path=data_dir,
                                               train=train_path,
                                               validation=valid_path,
                                               test=test_path,
-                                              format='csv',
+                                              format=args.file_type,
                                               skip_header=True,
                                               csv_reader_params={'delimiter':','},
                                               fields=[('src',CODE),('trg',NL)])
