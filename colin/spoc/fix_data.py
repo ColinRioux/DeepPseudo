@@ -1,6 +1,6 @@
 """
 Author: Colin Rioux
-Fix input_data such that problem ids are unique
+Fix SPoC input_data such that problem ids are unique
 Assumes order of occurrence is unique
 """
 import glob
@@ -12,6 +12,7 @@ import os
 
 arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument('--data_path', default='./data/in/')
+arg_parser.add_argument('--out_path', default='./data/uniq/')
 args = arg_parser.parser_args()
 
 files = glob.glob(os.path.join(args.data_path, "*.tsv"))
@@ -48,4 +49,4 @@ for file in files:
                 dfs.append(ndf)
 
     final_df = pd.concat(dfs, axis=1).T.reset_index(drop=True)
-    final_df.to_csv(str('./data/unique/uniq-') + fname, sep="\t")
+    final_df.to_csv(os.path.join(args.out_path, fname), sep="\t")
