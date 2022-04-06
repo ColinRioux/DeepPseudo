@@ -40,6 +40,10 @@ print(f'Device: {DEVICE}')
 """
 参数设置 (Hyperparams)
 """
+sep = ','
+if args.file_type == '.tsv':
+    sep = '\t'
+
 train = args.train
 data_dir = args.data_path
 train_path = "train" + args.file_type
@@ -48,6 +52,8 @@ test_path = "test" + args.file_type
 save_path = 'model/django.pth'
 if data_dir == 'data/spoc':
     save_path = 'model/spoc.pth'
+elif data_dir == 'data/exp2':
+    save_path = 'model/exp2.pth'
 D_MODEL = 256
 N_LAYERS = 3
 N_HEADS = 8
@@ -665,9 +671,9 @@ sentences, translated_sentences, dest_sentences, attention_weights, pred_logps =
 import pandas as pd
 column_name = ['comment']
 nl_df = pd.DataFrame(dest_sentences, columns=column_name)
-nl_df.to_csv('result/true_pseudo.csv', index=None, header=False)
+nl_df.to_csv('result/true_pseudo.csv', sep=sep, index=None, header=False)
 pred_df = pd.DataFrame(translated_sentences, columns=column_name)
-pred_df.to_csv('result/pred_pseudo.csv', index=None, header=False)
+pred_df.to_csv('result/pred_pseudo.csv', sep=sep, index=None, header=False)
 
 from nlgeval import compute_metrics
 metrics_dict = compute_metrics(hypothesis='result/pred_pseudo.csv',
