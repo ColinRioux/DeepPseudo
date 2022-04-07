@@ -42,7 +42,7 @@ print(f'Device: {DEVICE}')
 参数设置 (Hyperparams)
 """
 sep = ','
-if args.file_type == '.tsv':
+if args.file_type == 'tsv':
     sep = '\t'
 
 train = args.train
