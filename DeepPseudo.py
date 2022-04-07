@@ -672,10 +672,10 @@ sentences, translated_sentences, dest_sentences, attention_weights, pred_logps =
 import pandas as pd
 column_name = ['comment']
 nl_df = pd.DataFrame(dest_sentences, columns=column_name)
-nl_df.to_csv('result/true_pseudo.csv', sep=sep, index=None, header=False)
+nl_df.to_csv('result/true_pseudo.' + args.file_type, sep=sep, index=None, header=False)
 pred_df = pd.DataFrame(translated_sentences, columns=column_name)
-pred_df.to_csv('result/pred_pseudo.csv', sep=sep, index=None, header=False)
+pred_df.to_csv('result/pred_pseudo.' + args.file_type, sep=sep, index=None, header=False)
 
 from nlgeval import compute_metrics
-metrics_dict = compute_metrics(hypothesis='result/pred_pseudo.csv',
-                               references=['result/true_pseudo.csv'])
+metrics_dict = compute_metrics(hypothesis='result/pred_pseudo.' + args.file_type,
+        references=['result/true_pseudo.' + args.file_type])
