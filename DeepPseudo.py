@@ -106,7 +106,7 @@ NL = Field(tokenize = tokenize_code,
             batch_first = True)
 
 if args.experiment:
-    data.TabularDataset(path=os.path.join(data_dir,test_path), format=args.file_type, skip_header=True, fields=[('sc',CODE)]) 
+    test_data = data.TabularDataset(path=os.path.join(data_dir,test_path), format=args.file_type, skip_header=True, fields=[('sc',CODE)]) 
 else:    
     train_data, valid_data, test_data = data.TabularDataset.splits(path=data_dir, train=train_path, validation=valid_path, test=test_path, format=args.file_type, skip_header=True, fields=[('src',CODE),('trg',NL)])
 
