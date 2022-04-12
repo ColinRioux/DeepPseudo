@@ -23,7 +23,7 @@ import pickle as pkl
 
 arg_parser = argparse.ArgumentParser(description='Execute DeepPseudo')
 arg_parser.add_argument('--train', action='store_true', help='Train or not train')
-arg_parser.add_argument('--data_path', help='The location of the train, val, and test sets', default='data/django')
+arg_parser.add_argument('--data_path', help='The location of the test set', default='data/django')
 arg_parser.add_argument('--file_type', help='File type of the datasets', default='csv')
 arg_parser.add_argument('--batch_size', default=64, type=int)
 arg_parser.add_argument('--model_path', help='The location of the trained model', default='model/django.pth')
@@ -52,14 +52,8 @@ if args.file_type == 'tsv':
 
 train = args.train
 data_dir = args.data_path
-train_path = "train." + args.file_type
-valid_path = "valid." + args.file_type
 test_path = "test." + args.file_type
 save_path = args.model_path
-if data_dir == 'data/spoc':
-    save_path = 'model/spoc.pth'
-elif data_dir == 'data/exp2':
-    save_path = 'model/exp2.pth'
 D_MODEL = 256
 N_LAYERS = 3
 N_HEADS = 8
@@ -86,6 +80,9 @@ def tokenize_nl(text):
     text = text.replace("."," ")
     return text.split()
 
+def read_vocab(pth):
+    with open(pth, 'rb') as f:
+        return pkl.load(f)
 
 CODE = Field(tokenize = tokenize_code,
             init_token = '<sos>',
@@ -93,34 +90,17 @@ CODE = Field(tokenize = tokenize_code,
             lower = True,
             batch_first = True)
 
-NL = Field(tokenize = tokenize_code,
-            init_token = '<sos>',
-            eos_token = '<eos>',
-            lower = True,
-            batch_first = True)
+test_data = data.TabularDataset(path=os.path.join(data_dir,test_path), format=args.file_type, skip_header=True, fields=[('sc',CODE)]) 
 
-train_data, valid_data, test_data = data.TabularDataset.splits(path=data_dir,
-                                              train=train_path,
-                                              validation=valid_path,
-                                              test=test_path,
-                                              format=args.file_type,
-                                              skip_header=True,
-                                              #csv_reader_params={'delimiter':','},
-                                              fields=[('src',CODE),('trg',NL)])
 MIN_COUNT = 1
-CODE.build_vocab(train_data, min_freq=MIN_COUNT)
-NL.build_vocab(train_data, min_freq=MIN_COUNT)
+#CODE.build_vocab(train_data, min_freq=MIN_COUNT)
+CODE.vocab = read_vocab("./data/staqc/vocab.pickle")
 print(f'Length of CODE vocabulary: {len(CODE.vocab):,}')
-print(f'Length of NL vocabulary: {len(NL.vocab):,}')
 
-train_iterator, valid_iterator, test_iterator = BucketIterator.splits(
-    (train_data, valid_data, test_data),
-     batch_size = BATCH_SIZE,
-     sort_within_batch = True,
-     sort_key = lambda x : len(x.src),
-     device = DEVICE)
 
-threshold_wordcount = np.percentile([len(i) for i in train_data.src] + [len(i) for i in valid_data.src] + [len(i) for i in test_data.src], 97.5)
+test_iterator = BucketIterator(test_data, batch_size=BATCH_SIZE, sort_within_batch=True, sort_key=(lambda x: len(x.sc)), device=DEVICE)
+
+threshold_wordcount = np.percentile([len(i) for i in test_data.sc], 97.5)
 
 class PGD():
     def __init__(self, model):
