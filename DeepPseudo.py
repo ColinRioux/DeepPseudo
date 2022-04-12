@@ -45,7 +45,7 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f'Device: {DEVICE}')
 
 """
-参数设置 (Hyperparams)
+Hyperparams
 """
 sep = ','
 if args.file_type == 'tsv':
@@ -205,8 +205,9 @@ print(f'Number of parameters of the model: {sum(p.numel() for p in transformer.p
 pgd = PGD(transformer)
 K = 3
 
-if(train):
-    if(os.path.exists(save_path)):
+""" Train """
+if train:
+    if os.path.exists(save_path):
         transformer.load_state_dict(torch.load(save_path))
         transformer.to(DEVICE)
     trainer = Trainer(model=transformer, optimizer=optimizer, criterion=criterion)
@@ -214,7 +215,6 @@ if(train):
 
 transformer.load_state_dict(torch.load(save_path))
 transformer.to(DEVICE)
-
 
 def translate(sentences, model, beam_size, src_field, dest_field, max_len, device):
     if isinstance(sentences, list):
