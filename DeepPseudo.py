@@ -15,6 +15,9 @@ from torchtext.data.metrics import bleu_score
 from torch.nn import Parameter
 from transformers import RobertaTokenizer
 
+from torchtext.legacy import data
+from beam_utils import Node, find_best_path, find_path
+
 import argparse
 
 arg_parser = argparse.ArgumentParser(description='Execute DeepPseudo')
@@ -22,6 +25,7 @@ arg_parser.add_argument('--train', action='store_true', help='Train or not train
 arg_parser.add_argument('--data_path', help='The location of the train, val, and test sets', default='data/django')
 arg_parser.add_argument('--file_type', help='File type of the datasets', default='csv')
 arg_parser.add_argument('--batch_size', default=64, type=int)
+arg_parser.add_argument('--model_path', help='The location of the trained model', default='model/django.pth')
 args = arg_parser.parse_args()
 
 warnings.simplefilter(action='ignore', category=UserWarning)
@@ -50,7 +54,7 @@ data_dir = args.data_path
 train_path = "train." + args.file_type
 valid_path = "valid." + args.file_type
 test_path = "test." + args.file_type
-save_path = 'model/django.pth'
+save_path = args.model_path
 if data_dir == 'data/spoc':
     save_path = 'model/spoc.pth'
 elif data_dir == 'data/exp2':
@@ -71,6 +75,7 @@ GRAD_CLIP = 1.0
 print(f'Training: {train}')
 print(f'Data Directory: {data_dir}')
 print(f'Model Save: {save_path}')
+print(f'Batch Size: {BATCH_SIZE}')
 
 def tokenize_code(text):
     return text.split()
@@ -93,7 +98,6 @@ NL = Field(tokenize = tokenize_code,
             lower = True,
             batch_first = True)
 
-from torchtext.legacy import data
 train_data, valid_data, test_data = data.TabularDataset.splits(path=data_dir,
                                               train=train_path,
                                               validation=valid_path,
@@ -117,7 +121,6 @@ train_iterator, valid_iterator, test_iterator = BucketIterator.splits(
 
 threshold_wordcount = np.percentile([len(i) for i in train_data.src] + [len(i) for i in valid_data.src] + [len(i) for i in test_data.src], 97.5)
 
-import torch
 class PGD():
     def __init__(self, model):
         self.model = model
@@ -608,7 +611,6 @@ if(train):
 transformer.load_state_dict(torch.load(save_path))
 transformer.to(DEVICE)
 
-from beam_utils import Node, find_best_path, find_path
 
 def translate(sentences, model, beam_size, src_field, dest_field, max_len, device):
     if isinstance(sentences, list):
