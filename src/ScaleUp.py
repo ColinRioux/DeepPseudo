@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torch.nn import Parameter
 
 class ScaleUp(nn.Module):
     """ScaleUp"""

@@ -20,18 +20,6 @@ from beam_utils import Node, find_best_path, find_path
 
 import argparse
 import pickle as pkl
-from src.PGD import PGD
-from src.ScaleUp import ScaleUp
-from src.MultiHeadAttentionLayer import MultiHeadAttentionLayer
-from src.PositionWiseFeedForwardLayer import PositionWiseFeedForwardLayer
-from src.PositionalEncodingLayer import PositionalEncodingLayer
-from src.EncoderLayer import EncoderLayer
-from src.DecoderLayer import DecoderLayer
-from src.EncoderBlockLayer import EncoderBlockLayer
-from src.DecoderBlockLayer import DecoderBlockLayer
-from src.Trainer import Trainer
-from src.Transformer import Transformer
-from src.AverageMeter import AverageMeter
 
 arg_parser = argparse.ArgumentParser(description='Execute DeepPseudo')
 arg_parser.add_argument('--train', action='store_true', help='Train or not train')
@@ -69,10 +57,6 @@ train_path = "train." + args.file_type
 valid_path = "valid." + args.file_type
 test_path = "test." + args.file_type
 save_path = args.model_path
-if data_dir == 'data/spoc':
-    save_path = 'model/spoc.pth'
-elif data_dir == 'data/exp2':
-    save_path = 'model/exp2.pth'
 D_MODEL = 256
 N_LAYERS = 3
 N_HEADS = 8
@@ -144,6 +128,18 @@ train_iterator, valid_iterator, test_iterator = BucketIterator.splits(
      device = DEVICE)
 
 threshold_wordcount = np.percentile([len(i) for i in train_data.src] + [len(i) for i in valid_data.src] + [len(i) for i in test_data.src], 97.5)
+from src.PGD import PGD
+from src.ScaleUp import ScaleUp
+from src.MultiHeadAttentionLayer import MultiHeadAttentionLayer
+from src.PositionWiseFeedForwardLayer import PositionWiseFeedForwardLayer
+from src.PositionalEncodingLayer import PositionalEncodingLayer
+from src.EncoderLayer import EncoderLayer
+from src.DecoderLayer import DecoderLayer
+from src.EncoderBlockLayer import EncoderBlockLayer
+from src.DecoderBlockLayer import DecoderBlockLayer
+from src.Trainer import Trainer
+from src.Transformer import Transformer
+from src.AverageMeter import AverageMeter
 
 def scaling_factor(sequence_threshold):
     return np.log2((sequence_threshold ** 2) - sequence_threshold)
