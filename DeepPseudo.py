@@ -132,16 +132,37 @@ if args.vocab:
 print(f'Length of CODE vocabulary: {len(CODE.vocab):,}')
 print(f'Length of NL vocabulary: {len(NL.vocab):,}')
 
+threshold_wordcount = np.percentile([len(i) for i in test_data.sc], 97.5)
 if args.experiment:
     test_iterator = BucketIterator(test_data, batch_size=BATCH_SIZE, sort_within_batch=True, sort_key=(lambda x : len(x.src)), device=DEVICE)
-    
-    threshold_wordcount = np.percentile([len(i) for i in test_data.sc], 97.5)
-    from src import *
+    from src.PGD import PGD
+    from src.ScaleUp import ScaleUp
+    from src.MultiHeadAttentionLayer import MultiHeadAttentionLayer
+    from src.PositionWiseFeedForwardLayer import PositionWiseFeedForwardLayer
+    from src.PositionalEncodingLayer import PositionalEncodingLayer
+    from src.EncoderLayer import EncoderLayer
+    from src.DecoderLayer import DecoderLayer
+    from src.EncoderBlockLayer import EncoderBlockLayer
+    from src.DecoderBlockLayer import DecoderBlockLayer
+    from src.Trainer import Trainer
+    from src.Transformer import Transformer
+    from src.AverageMeter import AverageMeter
 else:
     train_iterator, valid_iterator, test_iterator = BucketIterator.splits((train_data, valid_data, test_data), batch_size=BATCH_SIZE, sort_within_batch=True, sort_key=(lambda x : len(x.src)), device=DEVICE)
 
     threshold_wordcount = np.percentile([len(i) for i in train_data.src] + [len(i) for i in valid_data.src] + [len(i) for i in test_data.src], 97.5)
-    from src import *
+    from src.PGD import PGD
+    from src.ScaleUp import ScaleUp
+    from src.MultiHeadAttentionLayer import MultiHeadAttentionLayer
+    from src.PositionWiseFeedForwardLayer import PositionWiseFeedForwardLayer
+    from src.PositionalEncodingLayer import PositionalEncodingLayer
+    from src.EncoderLayer import EncoderLayer
+    from src.DecoderLayer import DecoderLayer
+    from src.EncoderBlockLayer import EncoderBlockLayer
+    from src.DecoderBlockLayer import DecoderBlockLayer
+    from src.Trainer import Trainer
+    from src.Transformer import Transformer
+    from src.AverageMeter import AverageMeter
 
 def scaling_factor(sequence_threshold):
     return np.log2((sequence_threshold ** 2) - sequence_threshold)
