@@ -83,6 +83,10 @@ def tokenize_nl(text):
     text = text.replace("."," ")
     return text.split()
 
+def load_vocab(pth):
+    with open(pth, 'rb') as f:
+        return pkl.load(f)
+
 def save_vocab(vocab, path):
     output = open(path, 'wb')
     pkl.dump(vocab, output, protocol=pkl.HIGHEST_PROTOCOL)
@@ -109,9 +113,19 @@ train_data, valid_data, test_data = data.TabularDataset.splits(path=data_dir,
                                               #csv_reader_params={'delimiter':','},
                                               fields=[('src',CODE),('trg',NL)])
 MIN_COUNT = 1
-CODE.build_vocab(train_data, min_freq=MIN_COUNT)
-NL.build_vocab(train_data, min_freq=MIN_COUNT)
 
+""" Load the vocab if saved """
+if os.path.exists(os.path.join(data_dir, "code_vocab.pkl")):
+    CODE.vocab = load_vocab(os.path.join(data_dir, "code_vocab.pkl"))
+else:
+    CODE.build_vocab(train_data, min_freq=MIN_COUNT)
+
+if os.path.exists(os.path.join(data_dir, "nl_vocab.pkl")):
+    NL.vocab = load_vocab(os.path.join(data_dir, "nl_vocab.pkl"))
+else:
+    NL.build_vocab(train_data, min_freq=MIN_COUNT)
+
+""" Dump the vocab if the option is set """
 if args.vocab:
     save_vocab(CODE.vocab, os.path.join(data_dir, "code_vocab.pkl"))
     save_vocab(NL.vocab, os.path.join(data_dir, "nl_vocab.pkl"))
