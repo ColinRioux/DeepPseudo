@@ -132,10 +132,9 @@ if args.vocab:
 print(f'Length of CODE vocabulary: {len(CODE.vocab):,}')
 print(f'Length of NL vocabulary: {len(NL.vocab):,}')
 
+threshold_wordcount = np.percentile([len(i) for i in test_data.sc], 97.5)
 if args.experiment:
     test_iterator = BucketIterator(test_data, batch_size=BATCH_SIZE, sort_within_batch=True, sort_key=(lambda x : len(x.src)), device=DEVICE)
-
-    threshold_wordcount = np.percentile([len(i) for i in test_data.sc], 97.5)
 else:
     train_iterator, valid_iterator, test_iterator = BucketIterator.splits((train_data, valid_data, test_data), batch_size=BATCH_SIZE, sort_within_batch=True, sort_key=(lambda x : len(x.src)), device=DEVICE)
 
