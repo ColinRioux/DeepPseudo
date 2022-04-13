@@ -5,15 +5,15 @@ from src.PositionWiseFeedForwardLayer import PositionWiseFeedForwardLayer
 
 class DecoderBlockLayer(nn.Module):
 
-    def __init__(self, d_model, n_heads, hidden_size, dropout):
+    def __init__(self, d_model, n_heads, hidden_size, dropout, seq_thresh):
         super(DecoderBlockLayer, self).__init__()
         self.d_model = d_model
         self.n_heads = n_heads
         self.hidden_size = hidden_size
         self.dropout = nn.Dropout(p=dropout)
-        self.mask_multi_head_attention_layer = MultiHeadAttentionLayer(d_model=d_model, n_heads=n_heads)
+        self.mask_multi_head_attention_layer = MultiHeadAttentionLayer(d_model=d_model, n_heads=n_heads, sequence_threshold=seq_thresh)
         self.mask_multi_head_attention_layer_norm = nn.LayerNorm(d_model)
-        self.multi_head_attention_layer = MultiHeadAttentionLayer(d_model=d_model, n_heads=n_heads)
+        self.multi_head_attention_layer = MultiHeadAttentionLayer(d_model=d_model, n_heads=n_heads, sequence_threshold=seq_thresh)
         self.multi_head_attention_layer_norm = nn.LayerNorm(d_model)
         self.position_wise_feed_forward_layer = PositionWiseFeedForwardLayer(d_model=d_model, hidden_size=hidden_size)
         self.position_wise_feed_forward_layer_norm = nn.LayerNorm(d_model)

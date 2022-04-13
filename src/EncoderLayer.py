@@ -6,7 +6,7 @@ from src.PositionalEncodingLayer import PositionalEncodingLayer
 
 class EncoderLayer(nn.Module):
 
-    def __init__(self, vocab_size, max_len, d_model, n_heads, hidden_size, kernel_size, dropout, n_layers, scale):
+    def __init__(self, vocab_size, max_len, d_model, n_heads, hidden_size, kernel_size, dropout, n_layers, scale, seq_thresh):
         super(EncoderLayer, self).__init__()
         self.vocab_size = vocab_size
         self.max_len = max_len
@@ -21,7 +21,7 @@ class EncoderLayer(nn.Module):
         self.position_encoding = PositionalEncodingLayer(d_model=d_model, max_len=max_len)
         self.encoder_block_layers = nn.ModuleList(
             [EncoderBlockLayer(d_model=d_model, n_heads=n_heads, hidden_size=hidden_size,
-                               dropout=dropout) for _ in range(n_layers)])
+                               dropout=dropout,seq_thresh=seq_thresh) for _ in range(n_layers)])
         self.fc_embedding_hidden = nn.Linear(d_model, hidden_size)
         self.fc_hidden_embedding = nn.Linear(hidden_size, d_model)
         self.conv1ds = nn.ModuleList([nn.Conv1d(hidden_size, hidden_size * 2, kernel_size=kernel_size,

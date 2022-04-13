@@ -5,7 +5,7 @@ from src.ScaleUp import ScaleUp
 
 class MultiHeadAttentionLayer(nn.Module):
 
-    def __init__(self, d_model, n_heads, sequence_threshold=threshold_wordcount):
+    def __init__(self, d_model, n_heads, sequence_threshold):
         super(MultiHeadAttentionLayer, self).__init__()
         assert d_model % n_heads == 0
         self.d_model = d_model

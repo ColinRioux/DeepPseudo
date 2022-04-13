@@ -20,6 +20,18 @@ from beam_utils import Node, find_best_path, find_path
 
 import argparse
 import pickle as pkl
+from src.PGD import PGD
+from src.ScaleUp import ScaleUp
+from src.MultiHeadAttentionLayer import MultiHeadAttentionLayer
+from src.PositionWiseFeedForwardLayer import PositionWiseFeedForwardLayer
+from src.PositionalEncodingLayer import PositionalEncodingLayer
+from src.EncoderLayer import EncoderLayer
+from src.DecoderLayer import DecoderLayer
+from src.EncoderBlockLayer import EncoderBlockLayer
+from src.DecoderBlockLayer import DecoderBlockLayer
+from src.Trainer import Trainer
+from src.Transformer import Transformer
+from src.AverageMeter import AverageMeter
 
 arg_parser = argparse.ArgumentParser(description='Execute DeepPseudo+')
 arg_parser.add_argument('--train', action='store_true', help='Train or not train')
@@ -136,34 +148,10 @@ if args.experiment:
     test_iterator = BucketIterator(test_data, batch_size=BATCH_SIZE, sort_within_batch=True, sort_key=(lambda x : len(x.src)), device=DEVICE)
 
     threshold_wordcount = np.percentile([len(i) for i in test_data.sc], 97.5)
-    from src.PGD import PGD
-    from src.ScaleUp import ScaleUp
-    from src.MultiHeadAttentionLayer import MultiHeadAttentionLayer
-    from src.PositionWiseFeedForwardLayer import PositionWiseFeedForwardLayer
-    from src.PositionalEncodingLayer import PositionalEncodingLayer
-    from src.EncoderLayer import EncoderLayer
-    from src.DecoderLayer import DecoderLayer
-    from src.EncoderBlockLayer import EncoderBlockLayer
-    from src.DecoderBlockLayer import DecoderBlockLayer
-    from src.Trainer import Trainer
-    from src.Transformer import Transformer
-    from src.AverageMeter import AverageMeter
 else:
     train_iterator, valid_iterator, test_iterator = BucketIterator.splits((train_data, valid_data, test_data), batch_size=BATCH_SIZE, sort_within_batch=True, sort_key=(lambda x : len(x.src)), device=DEVICE)
 
     threshold_wordcount = np.percentile([len(i) for i in train_data.src] + [len(i) for i in valid_data.src] + [len(i) for i in test_data.src], 97.5)
-    from src.PGD import PGD
-    from src.ScaleUp import ScaleUp
-    from src.MultiHeadAttentionLayer import MultiHeadAttentionLayer
-    from src.PositionWiseFeedForwardLayer import PositionWiseFeedForwardLayer
-    from src.PositionalEncodingLayer import PositionalEncodingLayer
-    from src.EncoderLayer import EncoderLayer
-    from src.DecoderLayer import DecoderLayer
-    from src.EncoderBlockLayer import EncoderBlockLayer
-    from src.DecoderBlockLayer import DecoderBlockLayer
-    from src.Trainer import Trainer
-    from src.Transformer import Transformer
-    from src.AverageMeter import AverageMeter
 
 def scaling_factor(sequence_threshold):
     return np.log2((sequence_threshold ** 2) - sequence_threshold)
@@ -194,7 +182,8 @@ transformer = Transformer(
         kernel_size=KERNEL_SIZE,
         dropout=DROPOUT,
         n_layers=N_LAYERS,
-        scale = SCALE
+        scale = SCALE,
+        seq_thresh=threshold_wordcount
     ),
     decoder=DecoderLayer(
         vocab_size=len(NL.vocab),
@@ -203,7 +192,8 @@ transformer = Transformer(
         n_heads=N_HEADS,
         hidden_size=HIDDEN_SIZE,
         dropout=DROPOUT,
-        n_layers=N_LAYERS
+        n_layers=N_LAYERS,
+        seq_thresh=threshold_wordcount
     ),
     src_pad_index=CODE.vocab.stoi[CODE.pad_token],
     dest_pad_index=NL.vocab.stoi[NL.pad_token]
