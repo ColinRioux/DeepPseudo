@@ -3,6 +3,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 from src.ScaleUp import ScaleUp
 
+def scaling_factor(sequence_threshold):
+    return np.log2((sequence_threshold ** 2) - sequence_threshold)
+
 class MultiHeadAttentionLayer(nn.Module):
 
     def __init__(self, d_model, n_heads, sequence_threshold):

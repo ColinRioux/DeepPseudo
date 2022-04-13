@@ -153,9 +153,6 @@ else:
 
     threshold_wordcount = np.percentile([len(i) for i in train_data.src] + [len(i) for i in valid_data.src] + [len(i) for i in test_data.src], 97.5)
 
-def scaling_factor(sequence_threshold):
-    return np.log2((sequence_threshold ** 2) - sequence_threshold)
-
 def accuracy(outputs, target_sequences, k=5):
     """ Calculate Top-k accuracy
     :param Tensor[batch_size, dest_seq_len, vocab_size] outputs
