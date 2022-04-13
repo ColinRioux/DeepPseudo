@@ -6,6 +6,21 @@ from src.AverageMeter import AverageMeter
 from src.PGD import PGD
 import tqdm
 
+def accuracy(outputs, target_sequences, k=5):
+    """ Calculate Top-k accuracy
+    :param Tensor[batch_size, dest_seq_len, vocab_size] outputs
+    :param Tensor[batch_size, dest_seq_len] target_sequences
+    :return float Top-k accuracy
+    """
+    # print([*map(lambda token: EN.vocab.itos[token], outputs.argmax(dim=-1)[0].tolist())])
+    # print([*map(lambda token: EN.vocab.itos[token], target_sequences[0].tolist())])
+    # print("="*100)
+    batch_size = target_sequences.size(0)
+    _, indices = outputs.topk(k, dim=2, largest=True, sorted=True)  # [batch_size, dest_seq_len, 5]
+    correct = indices.eq(target_sequences.unsqueeze(-1).expand_as(indices))
+    correct_total = correct.view(-1).float().sum()  # 0D tensor
+    return correct_total.item() * (100.0 / indices.numel())
+
 class Trainer:
     def __init__(self, model, optimizer, criterion, pgd, K):
         self.model = model
