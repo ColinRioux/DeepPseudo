@@ -3,14 +3,16 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 from src.AverageMeter import AverageMeter
+from src.PGD import PGD
 import tqdm
 
 class Trainer:
-    def __init__(self, model, optimizer, criterion):
+    def __init__(self, model, optimizer, criterion, pgd):
         self.model = model
         self.optimizer = optimizer
         self.criterion = criterion
         self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer,milestones=[15,25],gamma = 0.4)
+        self.pgd = pgd
 
     def train_step(self, loader, epoch, grad_clip):
         loss_tracker, acc_tracker = AverageMeter(), AverageMeter()
@@ -23,19 +25,19 @@ class Trainer:
             loss = self.criterion(logits.contiguous().view(-1, self.model.decoder.vocab_size),
                                   trg[:, 1:].contiguous().view(-1))
             loss.backward()
-            pgd.backup_grad()
+            self.pgd.backup_grad()
             # 对抗训练
             for t in range(K):
-                pgd.attack(is_first_attack=(t == 0))  # 在embedding上添加对抗扰动, first attack时备份param.data
+                self.pgd.attack(is_first_attack=(t == 0))  # 在embedding上添加对抗扰动, first attack时备份param.data
                 if t != K - 1:
                     self.model.zero_grad()
                 else:
-                    pgd.restore_grad()
+                    self.pgd.restore_grad()
                 loss_adv,_ = self.model(src, trg[:, :-1])
                 loss_adv = self.criterion(loss_adv.contiguous().view(-1, self.model.decoder.vocab_size),
                                       trg[:, 1:].contiguous().view(-1))
                 loss_adv.backward()  # 反向传播，并在正常的grad基础上，累加对抗训练的梯度
-            pgd.restore()  # 恢复embedding参数
+            self.pgd.restore()  # 恢复embedding参数
             nn.utils.clip_grad_norm_(self.model.parameters(), grad_clip)
             self.optimizer.step()
             self.scheduler.step()
@@ -71,10 +73,10 @@ class Trainer:
             if best_loss > val_loss:
                 best_loss = val_loss
                 torch.save(self.model.state_dict(), save_path)
-            history['acc'].append(acc);
+            history['acc'].append(acc)
             history['val_acc'].append(val_acc)
-            history['ppl'].append(ppl);
+            history['ppl'].append(ppl)
             history['val_ppl'].append(val_ppl)
-            history['loss'].append(loss);
+            history['loss'].append(loss)
             history['val_loss'].append(val_loss)
         return history
