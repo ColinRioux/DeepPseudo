@@ -193,7 +193,7 @@ if args.train and not args.experiment:
         transformer.load_state_dict(torch.load(save_path))
         transformer.to(DEVICE)
     trainer = Trainer(model=transformer, optimizer=optimizer, criterion=criterion, pgd=pgd, K=K)
-    history = trainer.train(train_loader=train_iterator, valid_loader=valid_iterator, n_epochs=N_EPOCHS, grad_clip=GRAD_CLIP)
+    history = trainer.train(train_loader=train_iterator, valid_loader=valid_iterator, n_epochs=N_EPOCHS, grad_clip=GRAD_CLIP, save_path=save_path)
 
 transformer.load_state_dict(torch.load(save_path))
 transformer.to(DEVICE)

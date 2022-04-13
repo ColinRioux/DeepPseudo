@@ -81,7 +81,7 @@ class Trainer:
                     f'Epoch: {epoch + 1:02d} - val_loss: {loss_:.3f} - val_ppl: {ppl_:.3f} - val_acc: {acc_:.3f}%')
         return loss_tracker.average, np.exp(loss_tracker.average), acc_tracker.average
 
-    def train(self, train_loader, valid_loader, n_epochs, grad_clip):
+    def train(self, train_loader, valid_loader, n_epochs, grad_clip, save_path):
         history, best_loss = {'acc': [], 'loss': [], 'ppl': [], 'val_ppl': [], 'val_acc': [], 'val_loss': []}, np.inf
         for epoch in range(n_epochs):
             loss, ppl, acc = self.train_step(train_loader, epoch, grad_clip)
