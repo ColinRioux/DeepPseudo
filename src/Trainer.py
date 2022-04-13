@@ -7,12 +7,13 @@ from src.PGD import PGD
 import tqdm
 
 class Trainer:
-    def __init__(self, model, optimizer, criterion, pgd):
+    def __init__(self, model, optimizer, criterion, pgd, K):
         self.model = model
         self.optimizer = optimizer
         self.criterion = criterion
         self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer,milestones=[15,25],gamma = 0.4)
         self.pgd = pgd
+        self.K = K
 
     def train_step(self, loader, epoch, grad_clip):
         loss_tracker, acc_tracker = AverageMeter(), AverageMeter()
@@ -27,9 +28,9 @@ class Trainer:
             loss.backward()
             self.pgd.backup_grad()
             # 对抗训练
-            for t in range(K):
+            for t in range(self.K):
                 self.pgd.attack(is_first_attack=(t == 0))  # 在embedding上添加对抗扰动, first attack时备份param.data
-                if t != K - 1:
+                if t != self.K - 1:
                     self.model.zero_grad()
                 else:
                     self.pgd.restore_grad()
