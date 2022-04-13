@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 from src.ScaleUp import ScaleUp
 
 def scaling_factor(sequence_threshold):
