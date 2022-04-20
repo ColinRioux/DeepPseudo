@@ -3,3 +3,6 @@ __pycache__/
 build/
 .DS_Store
 data/**/*.pkl
+data/**/*.npy
+data/**/*.npz
+data/**/*.txt
