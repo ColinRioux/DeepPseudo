@@ -17,9 +17,6 @@ with open(QUESTION, 'rb') as f:
     ob = pkl.load(f)
     ques_df = pd.DataFrame(ob, index=[0])
 
-#print(code_df.head())
-#print(ques_df.head())
-
 data = {"sc": [], "nl": []}
 for col in code_df.columns:
     data["sc"].append(repr(code_df.loc[0, col]))
