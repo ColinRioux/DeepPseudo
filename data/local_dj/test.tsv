@@ -1,0 +1,2 @@
+'select  *\nfrom    Table1\norder by\nabs(now() - date) desc\nlimit   1'
+'INSERT INTO new_table\nSELECT * FROM old_table_1\nUNION\nSELECT * FROM old_table_2'
