@@ -6,3 +6,6 @@ data/**/*.pkl
 data/**/*.npy
 data/**/*.npz
 data/**/*.txt
+data/**/*.bin
+model/
+result/
